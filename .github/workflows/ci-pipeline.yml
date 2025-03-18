@@ -119,7 +119,7 @@ jobs:
       - name: Update image version in manifest
         run: |
           # Use the IMAGE_NAME and VERSION environment variables to update the manifest
-          yq eval ''.spec.template.spec.containers[0].image = \"$IMAGE_NAME:$VERSION\"'' -i ./manifests/deployment.yaml
+          yq eval '.spec.template.spec.containers[0].image = \"$IMAGE_NAME:$VERSION\"' -i ./manifests/deployment.yaml
 
       - name: Commit and push updated manifest of deployment
         run: |
