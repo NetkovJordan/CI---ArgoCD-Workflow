@@ -99,10 +99,6 @@ jobs:
           repository: netkovjordan/CD---ArgoCD-Workflow
           token: ${{ secrets.GH_TOKEN }}
 
-      - name: Install yq
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y yq
 
       - name: Get version from Git tag
         id: version
@@ -115,10 +111,15 @@ jobs:
         run: |
           ls ./manifests/deployment.yaml || exit 1  # Fail if the file is not found
 
+      - name: Install yq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y yq
+
       - name: Update image version in manifest
         run: |
           # Use the IMAGE_NAME and VERSION environment variables to update the manifest
-          yq eval ".spec.template.spec.containers[0].image = \"$IMAGE_NAME:$VERSION\"" -i ./manifests/deployment.yaml
+          yq eval ''.spec.template.spec.containers[0].image = \"$IMAGE_NAME:$VERSION\"'' -i ./manifests/deployment.yaml
 
       - name: Commit and push updated manifest of deployment
         run: |
