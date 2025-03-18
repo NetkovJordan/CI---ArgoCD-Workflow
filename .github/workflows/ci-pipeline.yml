@@ -99,30 +99,29 @@ jobs:
           repository: netkovjordan/CD---ArgoCD-Workflow
           token: ${{ secrets.GH_TOKEN }}
           path: ./manifests
-      
-      - name: Get version from Git tag
-        id: version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
-      - name: Set image name as environment variable
-        run: echo "IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/ocean_app" >> $GITHUB_ENV
-
-      - name: Ensure file exists if not exit pipeline
-        run: |
-          ls ./manifests/deployment.yaml || exit 1
+      - name: Disable sparse checkout
+        run: git sparse-checkout disable
 
       - name: Install yq
         run: |
           sudo apt-get update
           sudo apt-get install -y yq
-      
-      - name: Debug Environment Variables
+
+      - name: Get version from Git tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - name: Set IMAGE_NAME as an environment variable
+        run: echo "IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/ocean_app" >> $GITHUB_ENV
+
+      - name: Ensure the YAML file exists
         run: |
-          echo "IMAGE_NAME: $IMAGE_NAME"
-          echo "VERSION: $VERSION"
+          ls ./manifests/deployment.yaml || exit 1  # Fail if the file is not found
 
       - name: Update image version in manifest
         run: |
+          # Use the IMAGE_NAME and VERSION environment variables to update the manifest
           yq eval ".spec.template.spec.containers[0].image = \"$IMAGE_NAME:$VERSION\"" -i ./manifests/deployment.yaml
 
       - name: Commit and push updated manifest of deployment
@@ -131,5 +130,4 @@ jobs:
           git config --global user.email "actions@github.com"
           git add ./manifests/deployment.yaml
           git commit -m "Update image version to $VERSION"
-          git push origin master 
-      
+          git push origin master
