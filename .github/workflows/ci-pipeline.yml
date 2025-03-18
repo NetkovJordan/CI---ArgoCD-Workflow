@@ -101,7 +101,7 @@ jobs:
       
       - name: Install yq
         run: |
-          sudo apt-get upate
+          sudo apt-get update
           sudo apt-get install -y yq
 
       - name: Update image version in manifest
