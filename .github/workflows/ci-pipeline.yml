@@ -104,6 +104,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y yq
       
+      - name: Get version from Git tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+      
       - name: Debug Environment Variables
         run: |
           echo "IMAGE_NAME: $IMAGE_NAME"
