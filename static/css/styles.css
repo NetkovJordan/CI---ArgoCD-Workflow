@@ -1,0 +1,78 @@
+/* General Styles */
+body {
+    background-color: #e0f7fa;
+    color: #0277bd;
+    font-family: 'Arial', sans-serif;
+    padding-top: 70px;
+}
+
+/* Navbar */
+.navbar {
+    background: linear-gradient(90deg, #0288d1, #01579b);
+}
+
+/* Hero Section */
+.hero-section {
+    background: url('../img/ocean.jpg') no-repeat center center/cover;
+    height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+}
+
+/* Cards */
+.card {
+    border-radius: 15px;
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 10px 20px rgba(0,0,0,0.2);
+}
+
+/* Animations */
+.animated {
+    animation-duration: 2s;
+}
+
+.fadeIn {
+    animation-name: fadeIn;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.bounceInLeft {
+    animation-name: bounceInLeft;
+}
+
+@keyframes bounceInLeft {
+    0% { transform: translateX(-3000px); }
+    60% { transform: translateX(30px); }
+    75% { transform: translateX(-10px); }
+    90% { transform: translateX(5px); }
+    100% { transform: translateX(0); }
+}
+
+.bounceInRight {
+    animation-name: bounceInRight;
+}
+
+@keyframes bounceInRight {
+    0% { transform: translateX(3000px); }
+    60% { transform: translateX(-30px); }
+    75% { transform: translateX(10px); }
+    90% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+
+/* Footer */
+.footer {
+    background-color: #01579b;
+    color: white;
+}
