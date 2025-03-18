@@ -108,7 +108,7 @@ jobs:
         run: |
           yq eval ".spec.template.spec.containers[0].image = \"$IMAGE_NAME:$VERSION\"" -i ./manifests/deployment.yaml
 
-      - name: Commit and push updated manifest
+      - name: Commit and push updated manifest of deployment
         run: |
           git config --global user.name "Github Actions"
           git config --global user.email "actions@github.com"
