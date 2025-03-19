@@ -119,7 +119,8 @@ jobs:
       
       - name: Update image version in manifest
         run: |
-          sed -n "s|image: .*/ocean_app|image: $IMAGE_NAME:$VERSION|p" ./manifests/deployment.yaml
+          sed -n "s|image: .*/ocean_app:[^ ]*|image: $IMAGE_NAME:$VERSION|g" ./manifests/deployment.yaml
+
 
 
       # - name: Commit and push updated manifest of deployment
