@@ -111,7 +111,7 @@ jobs:
         run: |
           echo "IMAGE NAME: $IMAGE_NAME"
           echo "VERSION: $VERSION"
-          exit 1
+      
 
       - name: Ensure the YAML file exists
         run: |
