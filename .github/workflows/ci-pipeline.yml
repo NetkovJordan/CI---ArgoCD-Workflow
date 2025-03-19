@@ -16,77 +16,77 @@ permissions:
 
 
 jobs:
-  hadolint:
-    name: Run Hadolint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  # hadolint:
+  #   name: Run Hadolint
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Run Hadolint
-        uses: hadolint/hadolint-action@f988afea3da57ee48710a9795b6bb677cc901183
-        with:
-          dockerfile: ./Dockerfile
-          format: sarif
-          output-file: hadolint-results.sarif
-          no-fail: true
+  #     - name: Run Hadolint
+  #       uses: hadolint/hadolint-action@f988afea3da57ee48710a9795b6bb677cc901183
+  #       with:
+  #         dockerfile: ./Dockerfile
+  #         format: sarif
+  #         output-file: hadolint-results.sarif
+  #         no-fail: true
           
-      - name: Upload Hadolint results
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: hadolint-results.sarif
-          wait-for-processing: true
+  #     - name: Upload Hadolint results
+  #       uses: github/codeql-action/upload-sarif@v3
+  #       with:
+  #         sarif_file: hadolint-results.sarif
+  #         wait-for-processing: true
 
-  super-linter:
-    name: Run Super Linter 
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  # super-linter:
+  #   name: Run Super Linter 
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Run Super Linter
-        uses: github/super-linter/slim@v5
-        env:
-          DEFAULT_BRANCH: master
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          VALIDATE_ALL_CODEBASE: false
-          VALIDATE_DOCKER_FILE: true
-          VALIDATE_PYTHON: true
+  #     - name: Run Super Linter
+  #       uses: github/super-linter/slim@v5
+  #       env:
+  #         DEFAULT_BRANCH: master
+  #         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+  #         VALIDATE_ALL_CODEBASE: false
+  #         VALIDATE_DOCKER_FILE: true
+  #         VALIDATE_PYTHON: true
   
-  docker-build-push:
-    name: Build and Push Docker Image
-    runs-on: ubuntu-latest
-    needs: [hadolint, super-linter]
-    env: 
-      IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/ocean_app
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+  # docker-build-push:
+  #   name: Build and Push Docker Image
+  #   runs-on: ubuntu-latest
+  #   needs: [hadolint, super-linter]
+  #   env: 
+  #     IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/ocean_app
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+  #     - name: Set up Docker Buildx
+  #       uses: docker/setup-buildx-action@v3
 
-      - name: Get version from Git tag
-        id: version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+  #     - name: Get version from Git tag
+  #       id: version
+  #       run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+  #     - name: Log in to Docker Hub
+  #       uses: docker/login-action@v3
+  #       with:
+  #         username: ${{ secrets.DOCKER_USERNAME }}
+  #         password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
       
-      - name: Build and tag Docker image
-        run: |
-          docker build -t $IMAGE_NAME:$VERSION .
-          docker tag $IMAGE_NAME:$VERSION $IMAGE_NAME:latest
+  #     - name: Build and tag Docker image
+  #       run: |
+  #         docker build -t $IMAGE_NAME:$VERSION .
+  #         docker tag $IMAGE_NAME:$VERSION $IMAGE_NAME:latest
 
-      - name: Push Docker image
-        run: |
-          docker push $IMAGE_NAME:$VERSION
-          docker push $IMAGE_NAME:latest
+  #     - name: Push Docker image
+  #       run: |
+  #         docker push $IMAGE_NAME:$VERSION
+  #         docker push $IMAGE_NAME:latest
 
   update-k8s-manifest:
     name: Update Kubernetes manifests with newest image version of Flask App
@@ -119,12 +119,13 @@ jobs:
       
       - name: Update image version in manifest
         run: |
-          sed -i "s|image: .*/ocean_app|image: $IMAGE_NAME:$VERSION|" ./manifests/deployment.yaml
+          sed -n "s|image: .*/ocean_app|image: $IMAGE_NAME:$VERSION|p" ./manifests/deployment.yaml
 
-      - name: Commit and push updated manifest of deployment
-        run: |
-          git config --global user.name "Github Actions"
-          git config --global user.email "actions@github.com"
-          git add ./manifests/deployment.yaml
-          git commit -m "Update image version to $VERSION"
-          git push origin master
+
+      # - name: Commit and push updated manifest of deployment
+      #   run: |
+      #     git config --global user.name "Github Actions"
+      #     git config --global user.email "actions@github.com"
+      #     git add ./manifests/deployment.yaml
+      #     git commit -m "Update image version to $VERSION"
+      #     git push origin master
