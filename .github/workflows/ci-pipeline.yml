@@ -106,6 +106,12 @@ jobs:
 
       - name: Set IMAGE_NAME as an environment variable
         run: echo "IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/ocean_app" >> $GITHUB_ENV
+      
+      - name: Debug envs
+        run: |
+          echo "IMAGE NAME: $IMAGE_NAME"
+          echo "VERSION: $VERSION"
+          exit 1
 
       - name: Ensure the YAML file exists
         run: |
